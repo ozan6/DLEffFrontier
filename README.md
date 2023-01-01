@@ -1,4 +1,4 @@
-# DeepLearningForEfficientFrontier
+# Deep Learning For Efficient Frontier
 
 This repository contains code corresponding to:
 
