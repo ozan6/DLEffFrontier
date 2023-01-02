@@ -95,7 +95,7 @@ def run_main(train, pathForWeights=None):
 
     # Number of points on the Efficient Frontier
     nBeta = 40
-    betaList = np.square(np.arange(0., 2, 2 / nBeta))
+    betaList = np.square(np.arange(0., 1.3, 1.3 / nBeta))
 
     ######################
 
