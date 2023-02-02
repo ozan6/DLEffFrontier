@@ -17,6 +17,6 @@ and optimizing the objective
 $$\sup_u:\ \mathrm{E}\left[ \ 
     X_T^u \right]  - \beta CVaR(X_T^u)  \qquad \beta > 0$$
 The approach, in its implementation being model independent, aims to train portfolio weights approximated in every time point by means of neural network. 
-The weights $u = (u^1,...,^n)$ are characterized by an porfolio agents constraints $u_t^i \geq 0, \sum_{i=1}^{n} u_{t}^{i} = 1$ in any time point $t$.
+The weights $u = (u^1,...,^n)$ are characterized by an porfolio agents constraints $u_t^i \geq 0,\sum_{i=1}^{n} u_{t}^{i} = 1$ in any time point $t$.
 
 
