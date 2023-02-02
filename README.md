@@ -16,10 +16,10 @@ $$
 X_T= X_0 + \sum_{i=1}^{n-1} u_i X_{t_i} \frac{S_{t_i+1} - S_{t_i}}{S_{t_i}}
 $$
 and optimizing the objective
-$$
+\begin{equation}
  \sup_u:\ \mathrm{E}\left[\ 
     X_T^u \right]  - \beta CVaR(X_T^u)  \qquad \beta > 0 
-$$
+\end{equation}
 The approach, in its implementation being model independent, aims to train portfolio weights approximated in every time point by means of neural network. 
 The weights $u = (u^1,...,^n) $ are characterized by an porfolio agents constraints $u_t^i \geq 0, \sum_{i=1}^n u_t^i = 1 $ in any time point $t$.
 
