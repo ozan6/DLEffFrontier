@@ -79,12 +79,12 @@ def run_main(train, pathForWeights=None):
 
     ######################
 
-    initialLR = 1E-2 / nbRiskyAssets
+    initialLR = 1E-2 / nbAssets
     finalLR = initialLR / 10
 
     # Network parameters
     activationFunction = tf.nn.tanh
-    nbNeurons = 10 + nbRiskyAssets
+    nbNeurons = 10 + nbAssets
     nbLayer = 3
     layerSize = np.ones([nbLayer]) * nbNeurons
     batchSize = 300
@@ -102,7 +102,7 @@ def run_main(train, pathForWeights=None):
     # Create keras model
 
     ######################
-    kerasCreator = FeedForwardWithPositiveAndNormedWeightsCreator(nbRiskyAssets, layerSize, activationFunction)
+    kerasCreator = FeedForwardWithPositiveAndNormedWeightsCreator(nbAssets, layerSize, activationFunction)
     kerasModel = kerasCreator.create()
 
     if not train:
