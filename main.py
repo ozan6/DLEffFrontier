@@ -4,7 +4,7 @@ from pathlib import Path
 
 import numpy as np
 import tensorflow as tf
-
+# ------------ Test the the main to load a model and do some nice things ---------
 from AssetModel import asset_model_utils
 from MeanCVaROptimizer.MeanCVaROptimizer import MeanCVaROptimizer
 from NeuralNetworks.FeedforwardNeuralNetwork import FeedForwardWithPositiveAndNormedWeightsCreator
@@ -87,11 +87,12 @@ def run_main(train, pathForWeights=None):
     nbNeurons = 10 + nbAssets
     nbLayer = 3
     layerSize = np.ones([nbLayer]) * nbNeurons
-    batchSize = 300
-    batchSizeEval = 6000
+    print( layerSize, ' LayerSize LOOOOKKK')
+    batchSize = 5
+    batchSizeEval = 1
 
-    numBatchDraws = 50
-    numEpochs = 50
+    numBatchDraws = 5
+    numEpochs = 5
 
     # Number of points on the Efficient Frontier
     nBeta = 40
@@ -101,9 +102,13 @@ def run_main(train, pathForWeights=None):
 
     # Create keras model
 
-    ######################
+    # ######################
     kerasCreator = FeedForwardWithPositiveAndNormedWeightsCreator(nbAssets, layerSize, activationFunction)
     kerasModel = kerasCreator.create()
+
+    ######################
+    # kerasCreator = LSTMNeuralNetworkCreator(nbAssets, layerSize , nbNeurons, activationFunction)
+    # kerasModel = kerasCreator.create()
 
     if not train:
         inputs = tf.ones([batchSize, 3])  # Inputs are (t,x,\beta)
@@ -119,7 +124,7 @@ def run_main(train, pathForWeights=None):
                                   T, dt, initialLR, finalLR)
 
     if train:
-        optimizer.train(batchSize, numBatchDraws, numEpochs, weightsFolder)
+            optimizer.train(batchSize, numBatchDraws, numEpochs, weightsFolder)
 
     expOpt, cVaROpt, optimList = evaluate_optimizer(optimizer, batchSizeEval)
 

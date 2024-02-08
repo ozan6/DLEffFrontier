@@ -34,27 +34,59 @@ class MeanCVaROptimizer:
         self.optimizer.learning_rate.assign(
             (self.finalLR - self.initialLR) / numEpochs * iteration + self.initialLR)
 
-    @tf.function
+    # @tf.function
+    # def simPorfolio(self, nbSimul, beta):
+    #     assetPrev = self.assetModel.initValues()
+    #     assetPrev = tf.tile(tf.constant(assetPrev, shape=[1, self.assetModel.size()], dtype=tf.float32), [nbSimul, 1])
+    #
+    #     portValueCur = self.portValue * tf.ones([nbSimul])
+    #     StateForWeights = tf.stack([portValueCur], axis=1)
+    #
+    #     stateForWeightsAndBeta = tf.concat([StateForWeights, beta * tf.ones([nbSimul, 1])], axis=1)
+    #     print(tf.shape(stateForWeightsAndBeta)[0], ' What is the shape we give into the neural network, take first dimension (this shall be the batch')
+    #     weights = self.kerasModel.getPortfolioWeights(0, stateForWeightsAndBeta)
+    #     for i in range(self.N):
+    #         asset = self.assetModel.oneStep(assetPrev, self.dt)
+    #         yieldAsset = (asset - assetPrev) / assetPrev
+    #         portValueCur = portValueCur * (1 + tf.reduce_sum(weights * yieldAsset, axis=-1))
+    #         if i < self.N - 1:
+    #             tNext = (i + 1) * self.dt
+    #             stateForWeights = tf.stack([portValueCur], axis=1)
+    #             stateForWeightsAndBeta = tf.concat([stateForWeights, beta * tf.ones([nbSimul, 1])], axis=1)
+    #             weights = self.kerasModel.getPortfolioWeights(tNext, stateForWeightsAndBeta)
+    #         assetPrev = asset
+    #     return portValueCur
+
+    @tf.function  # LSTM portfolio simulation
     def simPorfolio(self, nbSimul, beta):
         assetPrev = self.assetModel.initValues()
         assetPrev = tf.tile(tf.constant(assetPrev, shape=[1, self.assetModel.size()], dtype=tf.float32), [nbSimul, 1])
-
         portValueCur = self.portValue * tf.ones([nbSimul])
-        StateForWeights = tf.stack([portValueCur], axis=1)
 
-        stateForWeightsAndBeta = tf.concat([StateForWeights, beta * tf.ones([nbSimul, 1])], axis=1)
+        InitialstateForWeights = tf.stack([portValueCur], axis=1)
+
+
+        stateForWeightsAndBeta = tf.concat([InitialstateForWeights, beta * tf.ones([nbSimul, 1])], axis=1)
         weights = self.kerasModel.getPortfolioWeights(0, stateForWeightsAndBeta)
+
+        portValueCurAndHistory = portValueCur
+
         for i in range(self.N):
             asset = self.assetModel.oneStep(assetPrev, self.dt)
             yieldAsset = (asset - assetPrev) / assetPrev
             portValueCur = portValueCur * (1 + tf.reduce_sum(weights * yieldAsset, axis=-1))
+
+            portValueCurAndHistory.append(portValueCur)
             if i < self.N - 1:
-                tNext = (i + 1) * self.dt
+                #tNext = (i + 1) * self.dt
                 stateForWeights = tf.stack([portValueCur], axis=1)
                 stateForWeightsAndBeta = tf.concat([stateForWeights, beta * tf.ones([nbSimul, 1])], axis=1)
+                # LSTM: No time step needed. Just train the history
                 weights = self.kerasModel.getPortfolioWeights(tNext, stateForWeightsAndBeta)
             assetPrev = asset
         return portValueCur
+
+
 
     @tf.function
     def objectiveFunction(self, nbSimul):
